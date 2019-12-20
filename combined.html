@@ -25,6 +25,8 @@
         });
         function makeGraph(el, options, xOptions, yOptions, titleOption) {
           $("#finalResult svg").remove();
+          $("canvas").remove();
+          $("#download-area").append('<canvas id="canvas" class="d-none" height="768" width="768"></canvas>');
           try{
             functionPlot({
               title: titleOption,
@@ -158,7 +160,7 @@
     </div>
 ​
     <div class="container-fluid mx-4 mb-4" id="finalResult"></div>
-    <div class="container-fluid">
+    <div class="container-fluid" id="download-area">
       <button id="imageButton" class="mt-2 btn col-6 ml-2 btn-block btn btn-dark">Download</button>
       <canvas id="canvas" class="d-none" height="768" width="768"></canvas>
     </div>
