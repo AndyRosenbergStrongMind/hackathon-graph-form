@@ -15,11 +15,6 @@
       $(function() {
         var final = document.getElementById("finalResult");
 
-        $(".dropdown-item").on("click", function(e) {
-          var selected = document.getElementById("dropdownMenuButton");
-          $(selected).text($(this).text());
-        });
-
         $("#option-expander").click(function(e) {
           if ($("#other-options:hidden").length) {
             $("#other-options").removeClass("d-none");
@@ -28,13 +23,16 @@
             $("#other-options").hide();
           }
         });
-
-        function makeGraph(el, options) {
+        function makeGraph(el, options, xOptions, yOptions, titleOption) {
           $("#finalResult svg").remove();
           try{
             functionPlot({
+              title: titleOption,
               target: el,
-              xAxis: {domain: [-3, 8]},
+              width: 768,
+              height: 384,
+              xAxis: xOptions,
+              yAxis: yOptions,
               grid: true,
               data: [options]
             })
@@ -42,86 +40,176 @@
             alert("Your function had an error. Please try again.")
           }
         }
-
         $("#graphButton").click(function(e) {
           var input = {
             fn: $("#equation").val(),
             color: 'black',
           };
-
+          var xInputs = {
+            domain: [-10, 10],
+            label: $("#xLabel:visible").val()
+          };
+          var yInputs = {
+            domain: [-10, 10],
+            label: $("#yLabel:visible").val()
+          };
+          var titleInput = $("#graphTitle:visible").val();
           var domainMin = $("#domainMin:visible").val();
           var domainMax = $("#domainMax:visible").val();
-          var graphType = $("#lineStyle:visible").val();
+          var xMin = $("#xMin:visible").val();
+          var xMax = $("#xMax:visible").val();
+          var yMin = $("#yMin:visible").val();
+          var yMax = $("#yMax:visible").val();
+        //   var graphType = $("#lineStyle:visible").val();
           var color = $("#colorPicker:visible").val();
-
           if (domainMin && domainMax) {
             input.range = [domainMin, domainMax]
           }
-
           if (color) {
             input.color = color;
           }
-
-          if (graphType) {
-            input.graphType = graphType;
-            if ((graphType) === 'scatter') {
-              input.nSamples = 100;
-            }
+        //   if (graphType) {
+        //     input.graphType = graphType;
+        //     if ((graphType) === 'scatter') {
+        //       input.nSamples = 100;
+        //     }
+        //   }
+          if (xMin && xMax) {
+            xInputs.domain = [xMin, xMax]
           }
-
-          makeGraph(final, input);
+          if (yMin && yMax) {
+            yInputs.domain = [yMin, yMax]
+          }
+          makeGraph(final, input, xInputs, yInputs, titleInput);
         });
-
       });
     </script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Equations</a>
+      <a class="navbar-brand" href="#">Plot Me Maybe!</a>
     </nav>
     <div class="container-fluid">
       <div class="d-flex mb-4">
-        <input type="text" class="col-8 mx-2" id="equation" />
+        <em>f</em>(<em>x</em>) = <input type="text" class="col-4 mx-1" id="equation" />
         
         <button id="option-expander" class="btn btn-primary btn-block col-2">Edit Options</button>
       </div>
-
+​
       <form id="other-options" class="d-none">
         <div>
           <div class="col-md-8 d-inline-block">
+              <div class="form-group">
+                Graph Title:<input type="text" class="col-8 mx-2" id="graphTitle" />
+              </div>
               <div class="form-group">
                 <label for="exampleInputEmail">Pick A Color:</label>
                 <select id="colorPicker" class="col-8">
                   <option value="black">Select Color</option>
                   <option value="red">Red</option>
-                  <option value="orange">Orange</option>
+                  <option value="green">Green</option>
                   <option value="blue">Blue</option>
                   <option value="purple">Purple</option>
                 </select>
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="exampleInputEmail">Line Style:</label>
                 <select id="lineStyle" class="col-8">
                   <option value="">Line Style</option>
                   <option value="interval">Solid</option>
                   <option value="scatter">Dotted</option>
                 </select>
-              </div>
+              </div> -->
               <div class="form-group">
-                <label>Domain:</label>
+                <label>Function Domain:</label>
                 <input type="text" class="col-3" id="domainMin" />
                 <span appKatexAutoRender>&le;</span>
                 <span appKatexAutoRender><em>x</em></span>
                 <span appKatexAutoRender>&le;</span>
                 <input type="text" class="col-3" id="domainMax" />
               </div>
+              <div class="form-group">
+                <em>x</em>-Axis Label:<input type="text" class="col-8 mx-2" id="xLabel" />
+              </div>
+              <div class="form-group">
+                <label><em>x</em>-Axis:</label>
+                <input type="text" class="col-3" id="xMin" />
+                <span appKatexAutoRender>&le;</span>
+                <span appKatexAutoRender><em>x</em></span>
+                <span appKatexAutoRender>&le;</span>
+                <input type="text" class="col-3" id="xMax" />
+              </div>
+              <div class="form-group">
+                <em>y</em>-Axis Label:<input type="text" class="col-8 mx-2" id="yLabel" />
+              </div>
+              <div class="form-group">
+                <label><em>y</em>-Axis:</label>
+                <input type="text" class="col-3" id="yMin" />
+                <span appKatexAutoRender>&le;</span>
+                <span appKatexAutoRender><em>y</em></span>
+                <span appKatexAutoRender>&le;</span>
+                <input type="text" class="col-3" id="yMax" />
+              </div>
           </div>
           
         </div>
       </form>
-      <button id="graphButton" class="mt-2 btn col-8 ml-2 btn-block btn-secondary">Graph</button>
+      <button id="graphButton" class="mt-2 btn col-6 ml-2 btn-block btn-secondary">Graph</button>
     </div>
-
-    <div class="container-fluid" id="finalResult"></div>
+​
+    <div class="container-fluid mx-4 mb-4" id="finalResult"></div>
+    <div class="container-fluid">
+      <button id="imageButton" class="mt-2 btn col-6 ml-2 btn-block btn btn-dark">Download</button>
+      <canvas id="canvas" class="d-none" height="768" width="768"></canvas>
+    </div>
+    <script>
+      var btn = $('#imageButton')[0];
+  var canvas = document.querySelector('canvas');
+  
+  function triggerDownload (imgURI) {
+    var evt = new MouseEvent('click', {
+      view: window,
+      bubbles: false,
+      cancelable: true
+    });
+  
+    var a = document.createElement('a');
+    a.setAttribute('download', 'graph_image.png');
+    a.setAttribute('href', imgURI);
+    a.setAttribute('target', '_blank');
+  
+    a.dispatchEvent(evt);
+  }
+  
+  btn.addEventListener('click', function () {
+    var canvas = document.getElementById('canvas');
+    var svg = document.querySelector('svg');
+    var ctx = canvas.getContext('2d');
+    var data = (new XMLSerializer()).serializeToString(svg);
+    var DOMURL = window.URL || window.webkitURL || window;
+  
+    var img = new Image();
+    var svgBlob = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+    var url = DOMURL.createObjectURL(svgBlob);
+  
+    img.onload = function () {
+  
+      ctx.fillStyle = "white";
+      ctx.fill();
+      
+      ctx.drawImage(img, 0, 0);
+      
+      DOMURL.revokeObjectURL(url);
+  
+      var imgURI = canvas
+          .toDataURL('image/png')
+          .replace('image/png', 'image/octet-stream');
+  
+      triggerDownload(imgURI);
+    };
+  
+    img.src = url;
+  });
+      </script>
   </body>
 </html>
