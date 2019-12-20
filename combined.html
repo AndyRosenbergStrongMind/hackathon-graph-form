@@ -23,6 +23,7 @@
             $("#other-options").hide();
           }
         });
+
         function makeGraph(el, options, xOptions, yOptions, titleOption) {
           $("#finalResult svg").remove();
           $("canvas").remove();
@@ -38,8 +39,11 @@
               grid: true,
               data: [options]
             })
+            $("#imageButton").removeClass("d-none");
+            $("#imageButton").show();
           } catch {
-            alert("Your function had an error. Please try again.")
+            alert("Your function had an error. Please try again.");
+            $("#imageButton").hide();
           }
         }
         $("#graphButton").click(function(e) {
@@ -161,7 +165,7 @@
 ​
     <div class="container-fluid mx-4 mb-4" id="finalResult"></div>
     <div class="container-fluid" id="download-area">
-      <button id="imageButton" class="mt-2 btn col-6 ml-2 btn-block btn btn-dark">Download</button>
+      <button id="imageButton" class="mt-2 btn col-6 ml-2 btn-block btn btn-dark d-none">Download</button>
       <canvas id="canvas" class="d-none" height="768" width="768"></canvas>
     </div>
     <script>
